@@ -19,8 +19,8 @@
         <button class="back-btn" onclick="goBack()">← Back to main</button>
 
         <div class="lang-switch">
-            <a href="instruction-ru.html" class="lang-btn">🇷🇺 Русский</a>
-            <a href="instruction-en.html" class="lang-btn active">🇬🇧 English</a>
+            <a href="#" class="lang-btn" onclick="switchLang('ru')">🇷🇺 Русский</a>
+            <a href="#" class="lang-btn active" onclick="switchLang('en')">🇬🇧 English</a>
         </div>
 
         <div class="instruction-header">
@@ -80,7 +80,15 @@
         tg.expand();
 
         function goBack() {
-            tg.openLink('https://xik1ng.github.io/miniapp-guard/');
+            window.location.href = 'index.html';
+        }
+
+        function switchLang(lang) {
+            if (lang === 'ru') {
+                window.location.href = 'instruction-ru.html';
+            } else {
+                window.location.href = 'instruction-en.html';
+            }
         }
 
         function openSupport(username) {

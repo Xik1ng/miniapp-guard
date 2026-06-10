@@ -170,11 +170,7 @@ async function getConfig() {
 }
 
 function showInstruction() {
-    tg.showPopup({
-        title: '📖 Инструкция',
-        message: '1. Скачай Happ (Android/iOS) или v2rayNG (Android)\n2. Нажми «Добавить подписку»\n3. Вставь ссылку из бота\n4. Подключись!',
-        buttons: [{id: 'ok', type: 'ok', text: 'Понятно'}]
-    });
+    window.location.href = 'instruction-ru.html';
 }
 
 document.querySelectorAll('.tariff-card').forEach(card => {
@@ -189,7 +185,7 @@ document.getElementById('configBtn').addEventListener('click', getConfig);
 document.getElementById('refreshBtn').addEventListener('click', refreshStatus);
 document.getElementById('instructionLink').addEventListener('click', (e) => {
     e.preventDefault();
-    tg.openLink('https://xik1ng.github.io/miniapp-guard/instruction-ru.html');
+    window.location.href = 'instruction-ru.html';
 });
 document.getElementById('supportLink1').addEventListener('click', (e) => {
     e.preventDefault();
