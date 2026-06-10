@@ -16,11 +16,18 @@
     </div>
 
     <div class="container">
+        <div class="theme-switch-wrapper">
+            <label class="theme-switch">
+                <input type="checkbox" id="themeToggle" onchange="toggleTheme()">
+                <span class="slider"></span>
+            </label>
+        </div>
+
         <button class="back-btn" onclick="goBack()">← Back to main</button>
 
         <div class="lang-switch">
-            <a href="#" class="lang-btn" onclick="switchLang('ru')">🇷🇺 Русский</a>
-            <a href="#" class="lang-btn active" onclick="switchLang('en')">🇬🇧 English</a>
+            <a href="instruction-ru.html" class="lang-btn">🇷🇺 Русский</a>
+            <a href="instruction-en.html" class="lang-btn active">🇬🇧 English</a>
         </div>
 
         <div class="instruction-header">
@@ -94,6 +101,27 @@
         function openSupport(username) {
             tg.openTelegramLink(`https://t.me/${username}`);
         }
+
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-theme');
+                const themeToggle = document.getElementById('themeToggle');
+                if (themeToggle) themeToggle.checked = true;
+            }
+        }
+
+        function toggleTheme() {
+            if (document.body.classList.contains('light-theme')) {
+                document.body.classList.remove('light-theme');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-theme');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        initTheme();
 
         tg.MainButton.setText("Close");
         tg.MainButton.onClick(() => tg.close());

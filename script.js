@@ -201,3 +201,44 @@ tg.MainButton.onClick(() => tg.close());
 tg.MainButton.show();
 
 refreshStatus();
+
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+        document.body.classList.add('light-theme');
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) themeToggle.checked = true;
+    }
+}
+
+function toggleTheme() {
+    if (document.body.classList.contains('light-theme')) {
+        document.body.classList.remove('light-theme');
+        localStorage.setItem('theme', 'dark');
+    } else {
+        document.body.classList.add('light-theme');
+        localStorage.setItem('theme', 'light');
+    }
+}
+
+function addThemeSwitch() {
+    const header = document.querySelector('.header');
+    if (header && !document.querySelector('.theme-switch-wrapper')) {
+        const switchWrapper = document.createElement('div');
+        switchWrapper.className = 'theme-switch-wrapper';
+        switchWrapper.innerHTML = `
+            <label class="theme-switch">
+                <input type="checkbox" id="themeToggle" onchange="toggleTheme()">
+                <span class="slider"></span>
+            </label>
+        `;
+        header.insertBefore(switchWrapper, header.children[1]);
+    }
+}
+
+initTheme();
+addThemeSwitch();
+
+function goToProfile() {
+    window.location.href = 'profile.html';
+}
