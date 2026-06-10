@@ -1,47 +1,207 @@
-const glowElement = document.createElement('div');
-glowElement.className = 'glow-effect';
-document.body.appendChild(glowElement);
+const tg = window.Telegram.WebApp;
+tg.ready();
+tg.expand();
 
-let mouseX = 0, mouseY = 0;
+const initData = tg.initData;
+const initDataUnsafe = tg.initDataUnsafe;
+const userId = initDataUnsafe.user?.id;
 
-document.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-    glowElement.style.opacity = '0.6';
-    glowElement.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
+let isProcessing = false;
+
+const API_BASE = "https://ТВОЙ_ДОМЕН/api";
+
+async function callAPI(endpoint, method = 'GET', body = null) {
+    const headers = {
+        'Content-Type': 'application/json',
+        'X-Telegram-Init-Data': initData
+    };
     
-    clearTimeout(window.glowTimeout);
-    window.glowTimeout = setTimeout(() => {
-        glowElement.style.opacity = '0';
-    }, 100);
-});
+    const options = { method, headers };
+    if (body) options.body = JSON.stringify(body);
+    
+    const response = await fetch(`${API_BASE}/${endpoint}`, options);
+    return response.json();
+}
 
-document.querySelectorAll('.tariff-card, .btn').forEach(element => {
-    element.addEventListener('click', (e) => {
-        const ripple = document.createElement('span');
-        ripple.style.position = 'absolute';
-        ripple.style.top = `${e.clientY - element.getBoundingClientRect().top}px`;
-        ripple.style.left = `${e.clientX - element.getBoundingClientRect().left}px`;
-        ripple.style.width = '0';
-        ripple.style.height = '0';
-        ripple.style.borderRadius = '50%';
-        ripple.style.background = 'rgba(255, 255, 255, 0.3)';
-        ripple.style.transform = 'translate(-50%, -50%)';
-        ripple.style.transition = 'width 0.6s, height 0.6s';
-        ripple.style.pointerEvents = 'none';
-        ripple.style.zIndex = '10';
+function updateStatusUI(hasSubscription, expiryDate = null) {
+    const badge = document.getElementById('statusBadge');
+    const expiryText = document.getElementById('expiryText');
+    const configBtn = document.getElementById('configBtn');
+    
+    if (hasSubscription) {
+        badge.className = 'status-badge active';
+        badge.innerHTML = '✅ Подписка активна';
+        expiryText.innerHTML = `Действует до: <strong>${expiryDate}</strong>`;
+        configBtn.style.display = 'block';
+    } else {
+        badge.className = 'status-badge inactive';
+        badge.innerHTML = '❌ Нет активной подписки';
+        expiryText.innerHTML = 'Купите подписку, чтобы пользоваться VPN';
+        configBtn.style.display = 'none';
+    }
+}
+
+function showLoading(btn, text) {
+    const originalWidth = btn.offsetWidth;
+    btn.style.width = originalWidth + 'px';
+    btn.innerHTML = '<span class="loader-spinner"></span> ' + text;
+    btn.disabled = true;
+    btn.classList.add('btn-loading-active');
+}
+
+function hideLoading(btn, originalText) {
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+    btn.classList.remove('btn-loading-active');
+    btn.style.width = '';
+}
+
+async function refreshStatus() {
+    const refreshBtn = document.getElementById('refreshBtn');
+    const originalText = refreshBtn.innerHTML;
+    
+    showLoading(refreshBtn, 'ОБНОВЛЕНИЕ...');
+    
+    try {
+        const data = await callAPI('subscription/status');
         
-        element.style.position = 'relative';
-        element.style.overflow = 'hidden';
-        element.appendChild(ripple);
-        
+        if (data.has_subscription) {
+            updateStatusUI(true, data.expiry_date);
+            tg.showAlert('✅ Статус обновлён! Подписка активна.');
+        } else {
+            updateStatusUI(false);
+            tg.showAlert('🔄 Статус обновлён. Подписка неактивна.');
+        }
+    } catch (error) {
+        console.error('Error fetching status:', error);
+        document.getElementById('statusBadge').innerHTML = '❌ Ошибка загрузки';
+        tg.showAlert('❌ Не удалось обновить статус. Попробуй позже.');
+    } finally {
         setTimeout(() => {
-            ripple.style.width = '300px';
-            ripple.style.height = '300px';
-        }, 10);
+            hideLoading(refreshBtn, originalText);
+        }, 500);
+    }
+}
+
+async function selectTariff(days, price) {
+    if (isProcessing) return;
+    isProcessing = true;
+    
+    const tariffCards = document.querySelectorAll('.tariff-card');
+    let btn = null;
+    
+    for (let card of tariffCards) {
+        if (card.getAttribute('data-days') == days) {
+            btn = card;
+            break;
+        }
+    }
+    
+    const originalText = btn.innerHTML;
+    showLoading(btn, 'ОБРАБОТКА...');
+    
+    try {
+        const data = await callAPI('payment/create', 'POST', { days: days, price: price });
         
+        if (data.payment_url) {
+            tg.openLink(data.payment_url);
+        } else if (data.invoice_link) {
+            tg.openInvoice(data.invoice_link, (status) => {
+                if (status === 'paid') {
+                    refreshStatus();
+                    tg.showAlert('✅ Оплата прошла успешно! Подписка активирована.');
+                }
+            });
+        } else {
+            tg.showAlert('⚠️ Демо-режим: подписка активирована без оплаты');
+            await callAPI('demo/activate', 'POST', { days: days });
+            refreshStatus();
+        }
+    } catch (error) {
+        console.error('Error creating payment:', error);
+        tg.showAlert('❌ Ошибка! Попробуйте позже');
+    } finally {
         setTimeout(() => {
-            ripple.remove();
-        }, 600);
+            hideLoading(btn, originalText);
+            isProcessing = false;
+        }, 500);
+    }
+}
+
+async function getConfig() {
+    if (isProcessing) return;
+    isProcessing = true;
+    
+    const btn = document.getElementById('configBtn');
+    const originalText = btn.innerHTML;
+    
+    showLoading(btn, 'ЗАГРУЗКА...');
+    
+    try {
+        const data = await callAPI('vpn/config');
+        
+        if (data.config_url || data.subscription_url) {
+            const url = data.config_url || data.subscription_url;
+            tg.showPopup({
+                title: '🔗 Ссылка для подключения',
+                message: 'Скопируй ссылку и вставь её в приложение Happ или v2rayNG',
+                buttons: [
+                    {id: 'copy', type: 'default', text: '📋 Копировать'},
+                    {id: 'close', type: 'cancel', text: 'Закрыть'}
+                ]
+            }, (buttonId) => {
+                if (buttonId === 'copy') {
+                    tg.copyToClipboard(url);
+                    tg.showAlert('✅ Ссылка скопирована!');
+                }
+            });
+        } else {
+            tg.showAlert('❌ Конфиг не найден. Возможно, подписка неактивна.');
+        }
+    } catch (error) {
+        console.error('Error getting config:', error);
+        tg.showAlert('❌ Ошибка при получении конфига');
+    } finally {
+        setTimeout(() => {
+            hideLoading(btn, originalText);
+            isProcessing = false;
+        }, 500);
+    }
+}
+
+function showInstruction() {
+    tg.showPopup({
+        title: '📖 Инструкция',
+        message: '1. Скачай Happ (Android/iOS) или v2rayNG (Android)\n2. Нажми «Добавить подписку»\n3. Вставь ссылку из бота\n4. Подключись!',
+        buttons: [{id: 'ok', type: 'ok', text: 'Понятно'}]
+    });
+}
+
+document.querySelectorAll('.tariff-card').forEach(card => {
+    card.addEventListener('click', () => {
+        const days = parseInt(card.getAttribute('data-days'));
+        const price = parseInt(card.getAttribute('data-price'));
+        selectTariff(days, price);
     });
 });
+
+document.getElementById('configBtn').addEventListener('click', getConfig);
+document.getElementById('refreshBtn').addEventListener('click', refreshStatus);
+document.getElementById('instructionLink').addEventListener('click', (e) => {
+    e.preventDefault();
+    tg.openLink('https://xik1ng.github.io/miniapp-guard/instruction-ru.html');
+});
+document.getElementById('supportLink1').addEventListener('click', (e) => {
+    e.preventDefault();
+    tg.openTelegramLink('https://t.me/nuizac');
+});
+document.getElementById('supportLink2').addEventListener('click', (e) => {
+    e.preventDefault();
+    tg.openTelegramLink('https://t.me/Ecluzs');
+});
+
+tg.MainButton.setText("Закрыть");
+tg.MainButton.onClick(() => tg.close());
+tg.MainButton.show();
+
+refreshStatus();

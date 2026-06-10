@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Инструкция — Guard VPN</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="wave-bg">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+    </div>
+
+    <div class="container">
+        <button class="back-btn" onclick="goBack()">← Назад</button>
+
+        <div class="lang-switch">
+            <a href="instruction-ru.html" class="lang-btn active">🇷🇺 Русский</a>
+            <a href="instruction-en.html" class="lang-btn">🇬🇧 English</a>
+        </div>
+
+        <div class="instruction-header">
+            <div class="logo">📖</div>
+            <h1>Инструкция</h1>
+            <p>Как подключиться к Guard VPN</p>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">1</div>
+            <div class="step-title">Скачай приложение</div>
+            <div class="step-text">Выбери подходящее приложение для своего устройства:</div>
+            <div>
+                <a href="https://play.google.com/store/apps/details?id=incognit.vpn" target="_blank" class="app-badge">📱 Happ (Android)</a>
+                <a href="https://apps.apple.com/app/happ-vpn/id1633613532" target="_blank" class="app-badge">🍏 Happ (iOS)</a>
+                <a href="https://github.com/2dust/v2rayNG/releases/latest" target="_blank" class="app-badge">📱 v2rayNG (Android)</a>
+                <a href="https://github.com/hiddify/hiddify-next/releases/latest" target="_blank" class="app-badge">💻 Hiddify (Win/Mac/Linux)</a>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">2</div>
+            <div class="step-title">Получи ссылку</div>
+            <div class="step-text">Вернись на главный экран и нажми кнопку <strong>«Получить конфиг»</strong>. Скопируй полученную ссылку.</div>
+            <div class="link-box">💡 Пример ссылки: https://ваш-сервер/sub/abc123xyz</div>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">3</div>
+            <div class="step-title">Добавь подписку</div>
+            <div class="step-text"><strong>Для Happ:</strong><br>Открой приложение → нажми «Подписка» → «Добавить подписку» → вставь ссылку → «Добавить»</div>
+            <div class="step-text" style="margin-top: 12px;"><strong>Для v2rayNG:</strong><br>Открой приложение → нажми «+» → «Добавить подписку» → вставь ссылку → «ОК»</div>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">4</div>
+            <div class="step-title">Подключись</div>
+            <div class="step-text">Выбери сервер из списка и нажми на кнопку подключения. После подключения статус изменится на «Защищено».</div>
+        </div>
+
+        <div class="warning-box">
+            <div style="font-weight: 700; margin-bottom: 8px;">⚠️ Не работает?</div>
+            <div style="font-size: 14px; line-height: 1.5;">• Попробуй сменить сервер<br>• Обнови ссылку — нажми «Получить конфиг» ещё раз<br>• Переустанови приложение<br>• Свяжись с поддержкой</div>
+        </div>
+
+        <div class="support-links">
+            <a onclick="openSupport('nuizac')">🆘 @nuizac</a>
+            <a onclick="openSupport('Ecluzs')">🆘 @Ecluzs</a>
+        </div>
+
+        <div class="footer"><p>🛡 Guard VPN — твоя безопасность в приоритете</p></div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+        function goBack() { tg.close(); }
+        function openSupport(username) { tg.openTelegramLink(`https://t.me/${username}`); }
+        tg.MainButton.setText("Закрыть");
+        tg.MainButton.onClick(() => tg.close());
+        tg.MainButton.show();
+    </script>
+</body>
+</html>
