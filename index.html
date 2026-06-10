@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Guard VPN Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🛡️</div>
+            <h1>Guard VPN</h1>
+            <p>Быстрый и безопасный VPN</p>
+        </div>
+
+        <div class="status-card" id="statusCard">
+            <div class="status-badge loading" id="statusBadge">⏳ Загрузка...</div>
+            <div id="subscriptionInfo">
+                <div style="font-weight: 500;">Статус подписки</div>
+                <div class="expiry-info" id="expiryText">Проверяем...</div>
+            </div>
+        </div>
+
+        <div class="section-title">📱 Тарифы</div>
+        <div class="tariff-grid">
+            <div class="tariff-card" data-days="30" data-price="150">
+                <div class="tariff-name">1 месяц</div>
+                <div class="tariff-price">150₽</div>
+                <div class="tariff-days">30 дней</div>
+            </div>
+            <div class="tariff-card" data-days="90" data-price="400">
+                <div class="tariff-name">3 месяца</div>
+                <div class="tariff-price">400₽</div>
+                <div class="tariff-days">90 дней</div>
+            </div>
+        </div>
+
+        <button class="btn btn-primary" id="configBtn" style="display: none;">
+            🔗 Получить конфиг для подключения
+        </button>
+
+        <button class="btn btn-secondary" id="refreshBtn">
+            🔄 Обновить статус
+        </button>
+
+        <div class="footer">
+            <p>❓ Вопросы? Напиши <a href="#" id="supportLink1">@nuizac</a> или <a href="#" id="supportLink2">@Ecluzs</a></p>
+            <p style="margin-top: 8px;">📖 <a href="#" id="instructionLink">Инструкция по подключению</a></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
