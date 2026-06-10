@@ -16,7 +16,7 @@
     </div>
 
     <div class="container">
-        <button class="back-btn" onclick="goBack()">← Back</button>
+        <button class="back-btn" onclick="goBack()">← Back to main</button>
 
         <div class="lang-switch">
             <a href="instruction-ru.html" class="lang-btn">🇷🇺 Русский</a>
@@ -78,8 +78,15 @@
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
-        function goBack() { tg.close(); }
-        function openSupport(username) { tg.openTelegramLink(`https://t.me/${username}`); }
+
+        function goBack() {
+            tg.openLink('https://xik1ng.github.io/miniapp-guard/');
+        }
+
+        function openSupport(username) {
+            tg.openTelegramLink(`https://t.me/${username}`);
+        }
+
         tg.MainButton.setText("Close");
         tg.MainButton.onClick(() => tg.close());
         tg.MainButton.show();
