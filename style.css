@@ -10,22 +10,58 @@ body {
     color: #ffffff;
     padding: 20px;
     min-height: 100vh;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 0%, rgba(168, 85, 247, 0.15) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.glow-effect {
+    position: fixed;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.4) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.05s ease;
+    opacity: 0;
 }
 
 .container {
     max-width: 500px;
     margin: 0 auto;
+    position: relative;
+    z-index: 1;
 }
 
 .header {
     text-align: center;
     margin-bottom: 32px;
     padding-top: 20px;
+    animation: fadeInDown 0.8s ease;
 }
 
 .logo {
     font-size: 48px;
     margin-bottom: 12px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
 }
 
 .header h1 {
@@ -35,6 +71,13 @@ body {
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    background-size: 200% auto;
+    animation: shine 3s linear infinite;
+}
+
+@keyframes shine {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
 }
 
 .header p {
@@ -49,6 +92,14 @@ body {
     padding: 20px;
     margin-bottom: 24px;
     border: 1px solid rgba(168, 85, 247, 0.2);
+    transition: all 0.3s ease;
+    animation: fadeInUp 0.8s ease;
+}
+
+.status-card:hover {
+    border-color: rgba(168, 85, 247, 0.5);
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+    transform: translateY(-2px);
 }
 
 .status-badge {
@@ -58,12 +109,20 @@ body {
     font-size: 12px;
     font-weight: 600;
     margin-bottom: 16px;
+    transition: all 0.3s ease;
 }
 
 .status-badge.active {
     background: rgba(34, 197, 94, 0.2);
     color: #22c55e;
     border: 1px solid rgba(34, 197, 94, 0.3);
+    animation: statusPulse 2s infinite;
+}
+
+@keyframes statusPulse {
+    0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
 }
 
 .status-badge.inactive {
@@ -110,12 +169,34 @@ body {
     padding: 20px;
     text-align: center;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.tariff-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.tariff-card:hover::before {
+    left: 100%;
 }
 
 .tariff-card:hover {
     border-color: #a855f7;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(168, 85, 247, 0.3);
+}
+
+.tariff-card:active {
     transform: translateY(-2px);
 }
 
@@ -127,6 +208,7 @@ body {
 .tariff-card.disabled:hover {
     transform: none;
     border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: none;
 }
 
 .tariff-name {
@@ -140,6 +222,11 @@ body {
     font-weight: 800;
     color: #a855f7;
     margin-bottom: 8px;
+    transition: transform 0.3s ease;
+}
+
+.tariff-card:hover .tariff-price {
+    transform: scale(1.05);
 }
 
 .tariff-price small {
@@ -163,16 +250,39 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
     margin-bottom: 12px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn:active::after {
+    width: 300px;
+    height: 300px;
 }
 
 .btn-primary {
     background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
     color: white;
+    background-size: 200% auto;
+    transition: all 0.3s ease;
 }
 
 .btn-primary:hover {
     opacity: 0.9;
     transform: scale(0.98);
+    background-position: right center;
 }
 
 .btn-secondary {
@@ -183,6 +293,7 @@ body {
 
 .btn-secondary:hover {
     background: rgba(255, 255, 255, 0.15);
+    transform: scale(0.98);
 }
 
 .btn:disabled {
@@ -218,4 +329,154 @@ body {
 .footer a {
     color: #a855f7;
     text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.footer a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: #a855f7;
+    transition: width 0.3s ease;
+}
+
+.footer a:hover::after {
+    width: 100%;
+}
+
+.footer a:hover {
+    color: #c084fc;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tariff-card {
+    animation: fadeInUp 0.6s ease;
+    animation-fill-mode: both;
+}
+
+.tariff-card:nth-child(1) { animation-delay: 0.1s; }
+.tariff-card:nth-child(2) { animation-delay: 0.2s; }
+
+.btn-refresh {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #a855f7;
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    position: relative;
+    backdrop-filter: blur(10px);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.btn-refresh::before {
+    content: '🔄';
+    margin-right: 8px;
+    font-size: 16px;
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.btn-refresh:hover::before {
+    transform: rotate(180deg);
+}
+
+.btn-refresh:hover {
+    background: linear-gradient(135deg, #1e1e35 0%, #1a1a2e 100%);
+    border-color: rgba(168, 85, 247, 0.6);
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
+    transform: scale(0.98);
+}
+
+.btn-refresh.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.btn-refresh.loading::before {
+    animation: spin 0.8s linear infinite;
+    content: '⏳';
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+    color: white;
+    background-size: 200% auto;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::before {
+    content: '🔗';
+    margin-right: 8px;
+    font-size: 16px;
+}
+
+.btn-primary:hover {
+    background-position: right center;
+    transform: scale(0.98);
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+}
+
+.btn {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn:active {
+    transform: scale(0.96);
+}
+
+.btn::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        115deg,
+        transparent 0%,
+        transparent 40%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 60%,
+        transparent 100%
+    );
+    transform: rotate(45deg);
+    transition: left 0.5s ease;
+    pointer-events: none;
+}
+
+.btn:hover::after {
+    left: 100%;
 }
