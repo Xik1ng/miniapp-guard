@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Админ-панель — Guard VPN</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="container">
+        <!-- ШАПКА -->
+        <div class="admin-header">
+            <div>
+                <h1>👑 Admin Panel</h1>
+                <span style="font-size:13px;color:#888;">Guard VPN управление</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+                <span class="badge">Админ</span>
+                <label class="theme-switch" style="transform:scale(0.8);">
+                    <input type="checkbox" id="themeToggle" onchange="toggleTheme()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- СТАТИСТИКА -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="number" id="totalUsers">0</div>
+                <div class="label">👥 Всего пользователей</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="activeSubs">0</div>
+                <div class="label">✅ Активных подписок</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="bannedUsers">0</div>
+                <div class="label">🔨 Заблокировано</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="totalRefs">0</div>
+                <div class="label">🔗 Всего рефералов</div>
+            </div>
+        </div>
+
+        <!-- ПОИСК -->
+        <div class="input-group">
+            <input type="text" id="searchInput" placeholder="🔍 Поиск по ID или username..." oninput="searchUsers()">
+        </div>
+
+        <!-- ТАБЛИЦА ПОЛЬЗОВАТЕЛЕЙ -->
+        <div class="section-title">📋 Пользователи</div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Пользователь</th>
+                        <th>Статус</th>
+                        <th>Подписка</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTable">
+                    <tr><td colspan="4" class="text-center text-muted">Загрузка...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ПАГИНАЦИЯ -->
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0 20px 0;">
+            <button class="btn" onclick="prevPage()">◀ Назад</button>
+            <span id="pageInfo" style="color:#888;font-size:14px;">0 / 0</span>
+            <button class="btn" onclick="nextPage()">Вперед ▶</button>
+        </div>
+
+        <!-- КНОПКА ОБНОВЛЕНИЯ -->
+        <button class="btn" style="width:100%;padding:12px;" onclick="loadUsers()">🔄 Обновить данные</button>
+
+        <!-- ПОДВАЛ -->
+        <div style="text-align:center;margin-top:24px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.06);font-size:12px;color:#555;">
+            🛡 Guard VPN — админ-панель v1.0
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
